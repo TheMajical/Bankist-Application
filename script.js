@@ -98,4 +98,4 @@ function createUsername(user){
   return username;
 }
 
-console.log(createUsername("Steven Hawking Odrischol"));
+console.log(createUsername("Steven Hawking Odrischole"));
