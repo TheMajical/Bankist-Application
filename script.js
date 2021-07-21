@@ -89,3 +89,13 @@ function displayMovements(movements){
 }
 
 displayMovements(account1.movements);
+
+//Creating User Names
+function createUsername(user){
+  const username = user.toLowerCase().split(' ').map(function(word){
+    return word[0];
+  }).join('');
+  return username;
+}
+
+console.log(createUsername("Steven Hawking Odrischol"));
