@@ -90,12 +90,14 @@ function displayMovements(movements){
 
 displayMovements(account1.movements);
 
-//Creating User Names
-function createUsername(user){
-  const username = user.toLowerCase().split(' ').map(function(word){
-    return word[0];
-  }).join('');
-  return username;
+//Creating User Names & joining them to objects
+function createUsernames(accs){
+  accs.forEach(function(acc){
+    acc.username = acc.owner.toLowerCase().split(' ').map(function(word){
+      return word[0];
+    }).join('');
+  })
 }
 
-console.log(createUsername("Steven Hawking Odrischole"));
+createUsernames(accounts);
+console.log(accounts);
