@@ -88,7 +88,15 @@ function displayMovements(movements){
   })
 }
 
+function calcBalanceMovements(movements){
+  let balance = movements.reduce(function(acc, curr, i , arr){
+    return acc + curr;
+  } ,0)
+  labelBalance.textContent = balance;
+}
+
 displayMovements(account1.movements);
+calcBalanceMovements(account1.movements);
 
 //Creating User Names & joining them to objects
 function createUsernames(accs){
@@ -101,3 +109,11 @@ function createUsernames(accs){
 
 createUsernames(accounts);
 console.log(accounts);
+
+const deposits = movements.filter(function(mov){
+  return mov > 0;
+})
+const withdrawals = movements.filter(function(mov){
+  return mov < 0;
+})
+
