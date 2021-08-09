@@ -87,16 +87,13 @@ function displayMovements(movements){
     containerMovements.insertAdjacentHTML('afterbegin', HTML);
   })
 }
-
+//Calaculating User Balances
 function calcBalanceMovements(movements){
   let balance = movements.reduce(function(acc, curr, i , arr){
     return acc + curr;
   } ,0)
-  labelBalance.textContent = balance;
+  labelBalance.textContent = `${balance}€`;
 }
-
-displayMovements(account1.movements);
-calcBalanceMovements(account1.movements);
 
 //Creating User Names & joining them to objects
 function createUsernames(accs){
@@ -107,7 +104,24 @@ function createUsernames(accs){
   })
 }
 
+// Calculating and Displaying Summary 
+function calcDisplaySummary(movements){
+  const income = movements.filter(mov => mov > 0)
+  .reduce((acc, mov) => acc + mov , 0);
+  labelSumIn.textContent = `${income}€`;
+  const outcome = Math.abs(movements.filter(mov => mov < 0)
+  .reduce((acc, mov) => acc + mov, 0));
+  labelSumOut.textContent = `${outcome}€`;
+  const interest = movements.filter(mov => mov > 0)
+  .map(inc => inc * 1.2/100)
+  .reduce((acc, int) => acc + int , 0);
+  labelSumInterest.textContent = `${interest}€`;
+}
+
+displayMovements(account1.movements);
+calcBalanceMovements(account1.movements);
 createUsernames(accounts);
+calcDisplaySummary(account1.movements);
 console.log(accounts);
 
 const deposits = movements.filter(function(mov){
@@ -116,4 +130,3 @@ const deposits = movements.filter(function(mov){
 const withdrawals = movements.filter(function(mov){
   return mov < 0;
 })
-
