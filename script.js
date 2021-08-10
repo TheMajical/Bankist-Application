@@ -118,15 +118,30 @@ function calcDisplaySummary(movements){
   labelSumInterest.textContent = `${interest}€`;
 }
 
-displayMovements(account1.movements);
-calcBalanceMovements(account1.movements);
 createUsernames(accounts);
-calcDisplaySummary(account1.movements);
-console.log(accounts);
 
-const deposits = movements.filter(function(mov){
-  return mov > 0;
-})
-const withdrawals = movements.filter(function(mov){
-  return mov < 0;
+// Login 
+let currentAccount;
+
+btnLogin.addEventListener('click', function(e){
+  // Prevent form from submitting
+  e.preventDefault();
+  
+  currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value);
+
+  //Checking Pin (Used Chaining to check if currentAccount exists or NO)
+  if(currentAccount?.pin === Number(inputLoginPin.value)){
+    //Display UI & message
+    labelWelcome.textContent = `Welcome Back, ${currentAccount.owner.split(' ')[0]}`;
+    containerApp.style.opacity = 100;
+    //Clear input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+    //Display Movements
+    displayMovements(currentAccount.movements);
+    //Display Balance
+    calcBalanceMovements(currentAccount.movements);
+    //Display Summary
+    calcDisplaySummary(currentAccount.movements);
+  }
 })
