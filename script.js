@@ -105,15 +105,15 @@ function createUsernames(accs){
 }
 
 // Calculating and Displaying Summary 
-function calcDisplaySummary(movements){
-  const income = movements.filter(mov => mov > 0)
+function calcDisplaySummary(account){
+  const income = account.movements.filter(mov => mov > 0)
   .reduce((acc, mov) => acc + mov , 0);
   labelSumIn.textContent = `${income}€`;
-  const outcome = Math.abs(movements.filter(mov => mov < 0)
+  const outcome = Math.abs(account.movements.filter(mov => mov < 0)
   .reduce((acc, mov) => acc + mov, 0));
   labelSumOut.textContent = `${outcome}€`;
-  const interest = movements.filter(mov => mov > 0)
-  .map(inc => inc * 1.2/100)
+  const interest = account.movements.filter(mov => mov > 0)
+  .map(inc => inc * account.interestRate/100)
   .reduce((acc, int) => acc + int , 0);
   labelSumInterest.textContent = `${interest}€`;
 }
@@ -142,6 +142,6 @@ btnLogin.addEventListener('click', function(e){
     //Display Balance
     calcBalanceMovements(currentAccount.movements);
     //Display Summary
-    calcDisplaySummary(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
   }
 })
