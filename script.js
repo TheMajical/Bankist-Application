@@ -166,6 +166,21 @@ btnTransfer.addEventListener('click', function(e){
   }
 })
 
+//Loan
+// Our Bank has a rule,Which says we will give you loan only if there is atleast one deposit with atleast 10% of requested loan amount
+btnLoan.addEventListener('click', function(e){
+  // Prevent form from submitting
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+  inputLoanAmount.value = '';
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)){
+    //Add movement
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+  }
+})
+
 //Close Account
 btnClose.addEventListener('click', function(e){
   // Prevent form from submitting
@@ -184,3 +199,6 @@ btnClose.addEventListener('click', function(e){
     containerApp.style.opacity = 0;
   }
 })
+
+
+
