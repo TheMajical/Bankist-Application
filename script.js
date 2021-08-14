@@ -75,10 +75,11 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
 //Displaying Movements UI
-function displayMovements(movements){
+function displayMovements(movements, sort = false){
   containerMovements.innerHTML = '';
-
-  movements.forEach(function(mov, i){
+  //Shoud we sort the movements or not ?
+  const movs = sort ? movements.slice().sort((a,b) => a - b) : movements;
+  movs.forEach(function(mov, i){
     const type = mov > 0 ? 'deposit' : 'withdrawal'
     const HTML = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
@@ -200,5 +201,13 @@ btnClose.addEventListener('click', function(e){
   }
 })
 
+//Sort
+let sorted = false;
+btnSort.addEventListener('click', function(e){
+  // Prevent form from submitting
+  e.preventDefault();
 
-
+  displayMovements(currentAccount.movements, !sorted);
+  //flip sorted var
+  sorted = !sorted;
+})
