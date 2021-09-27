@@ -91,7 +91,14 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 //Functions 
 
 //Date Stuff
-function formatMovementDates(date){
+function formatCur(value, locale, currency){
+  return new Intl.NumberFormat(locale, {
+    style : 'currency',
+    currency : currency
+  }).format(value);
+}
+
+function formatMovementDates(date, locale){
   const  calcDaysPassed = (date1, date2) => Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
 
   const daysPassed = calcDaysPassed(new Date(), date);
@@ -100,10 +107,10 @@ function formatMovementDates(date){
   if (daysPassed === 1) return "Yesterday";
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  const day = `${date.getDate()}`.padStart(2, 0);
-  return `${day}/${month}/${year}`;
+  // const year = date.getFullYear();
+  // const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  // const day = `${date.getDate()}`.padStart(2, 0);
+  return new Intl.DateTimeFormat(locale).format(date);
 }
 
 //Displaying Movements UI
@@ -116,12 +123,12 @@ function displayMovements(acc, sort = false){
     const type = mov > 0 ? 'deposit' : 'withdrawal'
 
     const date = new Date(acc.movementsDates[i]);
-    let currentDate = formatMovementDates(date); 
+    let currentDate = formatMovementDates(date, acc.locale); 
 
     const HTML = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
     <div class="movements__date">${currentDate}</div>
-    <div class="movements__value">${mov}€</div>
+    <div class="movements__value">${formatCur(mov, acc.locale, acc.currency)}</div>
   </div>`
     containerMovements.insertAdjacentHTML('afterbegin', HTML);
   })
@@ -131,7 +138,7 @@ function calcBalanceMovements(acc){
   acc.balance = acc.movements.reduce(function(acc, curr, i , arr){
     return acc + curr;
   } ,0)
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${formatCur(acc.balance, acc.locale, acc.currency)}`;
 }
 
 //Creating User Names & joining them to objects
@@ -147,14 +154,14 @@ function createUsernames(accs){
 function calcDisplaySummary(account){
   const income = account.movements.filter(mov => mov > 0)
   .reduce((acc, mov) => acc + mov , 0);
-  labelSumIn.textContent = `${income}€`;
+  labelSumIn.textContent = `${formatCur(income, account.locale, account.currency)}`;
   const outcome = Math.abs(account.movements.filter(mov => mov < 0)
   .reduce((acc, mov) => acc + mov, 0));
-  labelSumOut.textContent = `${outcome}€`;
+  labelSumOut.textContent = `${formatCur(outcome, account.locale, account.currency)}`;
   const interest = account.movements.filter(mov => mov > 0)
   .map(inc => inc * account.interestRate/100)
   .reduce((acc, int) => acc + int , 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${formatCur(interest, account.locale, account.currency)}`;
 }
 
 function updateUI(acc){
@@ -186,13 +193,21 @@ btnLogin.addEventListener('click', function(e){
     containerApp.style.opacity = 100;
     //Creating & Displaying Date
     const now = new Date();
-    const year = now.getFullYear();
-    const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    const day = `${now.getDate()}`.padStart(2, 0);
-    const hour = `${now.getHours()}`.padStart(2, 0);
-    const min = `${now.getMinutes()}`.padStart(2, 0);
+    const options = {
+      hour : 'numeric',
+      minute : 'numeric',
+      day : '2-digit',
+      month : 'long',
+      year : 'numeric',
+      weekday : 'long'
 
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+    }
+    // const year = now.getFullYear();
+    // const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    // const day = `${now.getDate()}`.padStart(2, 0);
+    // const hour = `${now.getHours()}`.padStart(2, 0);
+    // const min = `${now.getMinutes()}`.padStart(2, 0);
+    labelDate.textContent = new Intl.DateTimeFormat(currentAccount.locale, options).format(now);
     //Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
