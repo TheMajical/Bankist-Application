@@ -171,14 +171,30 @@ function updateUI(acc){
 }
 
 createUsernames(accounts);
+// Prevent User inactivity
+function startLogOutTimer(){
+  let time = 120;
 
+  function tick() {
+    const mins = String(Math.trunc(time/60)).padStart(2, 0);
+    const seconds = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${mins}:${seconds}`;
+
+    if(time === 0){
+      clearInterval(logOutTimer);
+      labelWelcome.textContent = `Log in to get started`;
+      containerApp.style.opacity = 0;
+    }
+
+    time--;
+  }
+  //Starting timer immediately
+  tick();
+  const logOutTimer = setInterval(tick, 1000);
+  return logOutTimer;
+}
 // Login 
-let currentAccount;
-
-// Fake Login
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+let currentAccount, logOutTimer;
 
 btnLogin.addEventListener('click', function(e){
   // Prevent form from submitting
@@ -213,6 +229,9 @@ btnLogin.addEventListener('click', function(e){
     inputLoginPin.blur();
     //Display UI
     updateUI(currentAccount);
+
+    if (logOutTimer) clearInterval(logOutTimer);
+    logOutTimer = startLogOutTimer();
   }
 })
 
@@ -226,7 +245,7 @@ btnTransfer.addEventListener('click', function(e){
 
   const amount = Number(inputTransferAmount.value);
   const receiver = accounts.find(acc => acc.username === inputTransferTo.value);
-  console.log(amount, receiver);
+
   //Clear input fields
   inputTransferAmount.value = inputTransferTo.value = '';
   // Check if Transfer is valid
@@ -238,6 +257,10 @@ btnTransfer.addEventListener('click', function(e){
     currentAccount.movementsDates.push(new Date().toISOString());
     receiver.movementsDates.push(new Date().toISOString());
     updateUI(currentAccount);
+
+    //Reset timer
+    clearInterval(logOutTimer);
+    logOutTimer = startLogOutTimer();
   }
 })
 
@@ -255,6 +278,10 @@ btnLoan.addEventListener('click', function(e){
       currentAccount.movements.push(amount);
       currentAccount.movementsDates.push(new Date().toISOString());
       updateUI(currentAccount);
+
+    //Reset timer
+    clearInterval(logOutTimer);
+    logOutTimer = startLogOutTimer();
 
     }, 2500);
   }
@@ -289,4 +316,3 @@ btnSort.addEventListener('click', function(e){
   //flip sorted var
   sorted = !sorted;
 })
-
